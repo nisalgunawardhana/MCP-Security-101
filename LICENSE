@@ -1,0 +1,62 @@
+MIT License
+
+Copyright (c) 2025 MCP Security 101 Project
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Educational Use Disclaimer
+
+This repository is created for educational and security research purposes only. 
+The examples, code snippets, and vulnerability demonstrations contained within 
+are intended to help security professionals, developers, and researchers 
+understand and mitigate security risks in Model Context Protocol (MCP) implementations.
+
+### Important Notices:
+
+1. **Educational Purpose**: All content is designed for learning and should not 
+   be used for malicious purposes.
+
+2. **No Warranty**: The information is provided "as is" without warranty of any 
+   kind. Users assume all risks associated with using this information.
+
+3. **Responsible Use**: Users are expected to employ this knowledge responsibly 
+   and ethically, in accordance with applicable laws and regulations.
+
+4. **No Endorsement**: Inclusion of techniques or tools does not constitute 
+   endorsement for any particular use case.
+
+5. **Legal Compliance**: Users must ensure their use of this information 
+   complies with all applicable laws and regulations.
+
+### Limitation of Liability:
+
+The contributors and maintainers of this repository shall not be liable for 
+any damages, including but not limited to direct, indirect, incidental, 
+special, consequential, or punitive damages arising from the use or misuse 
+of the information provided.
+
+### Security Research Ethics:
+
+If you discover vulnerabilities using techniques described in this repository:
+- Follow responsible disclosure practices
+- Respect privacy and confidentiality
+- Do not cause harm to systems or data
+- Comply with all applicable laws and terms of service
