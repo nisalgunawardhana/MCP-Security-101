@@ -7,10 +7,13 @@
 | **Prompt Injection** | Critical | System override, data theft | Monitor for instruction patterns | Input sanitization, context isolation |
 | **Tool Poisoning** | Critical | Persistent backdoors | Tool integrity checks | Code signing, sandboxing |
 | **Dynamic Tool Changes** | High | Runtime compromise | Change monitoring | Immutable configs, approval workflows |
-| **Misconfigured Auth** | Critical | Unauthorized access | Failed auth monitoring | MFA, proper session mgmt |
+| **Misconfigured Auth** | Critical | Unauthorized access | Failed auth monitoring | MFA, external identity providers |
 | **Excessive Permissions** | High | Privilege escalation | Permission audits | RBAC, least privilege |
-| **Indirect Injection** | High | Stealth attacks | External data scanning | Source validation, content filtering |
-| **Supply Chain** | High | Backdoor installation | Dependency scanning | Vendor assessment, verification |
+| **Indirect Injection** | High | Stealth attacks | External data scanning | Prompt Shields, content filtering |
+| **Session Hijacking** | High | User impersonation | Session pattern analysis | Secure session IDs, user binding |
+| **Confused Deputy** | Medium | Authorization bypass | OAuth flow monitoring | Explicit consent, PKCE |
+| **Token Passthrough** | Critical | Security control bypass | Token audience analysis | Proper token validation |
+| **Supply Chain** | High | Backdoor installation | Dependency scanning | Component verification, GitHub Advanced Security |
 
 ---
 
@@ -22,18 +25,26 @@
 - [ ] Hardcoded credentials or API keys in source code
 - [ ] All users getting admin/excessive permissions
 - [ ] No session expiration or validation
+- [ ] Sessions used for authentication instead of authorization verification
+- [ ] Token passthrough without proper validation
 - [ ] External data loaded without validation
 - [ ] Missing input sanitization or validation
 - [ ] Tools executable without permission checks
+- [ ] Static client IDs without explicit consent workflows
+- [ ] OAuth flows without PKCE implementation
 
 ### Security Scan Points
 - [ ] Authentication mechanisms and session management
+- [ ] Token validation and audience verification
 - [ ] Input validation and sanitization routines
 - [ ] Permission and access control implementations
 - [ ] External data source integrations
 - [ ] Tool registration and execution processes
+- [ ] OAuth implementation and consent flows
+- [ ] Session ID generation and binding
 - [ ] Error handling and information disclosure
 - [ ] Logging and monitoring capabilities
+- [ ] Supply chain component verification
 
 ---
 
@@ -42,10 +53,14 @@
 ### Immediate Implementation
 1. **Input Validation**: Validate ALL user inputs against strict schemas
 2. **Output Sanitization**: Filter all outputs for sensitive information
-3. **Authentication**: Implement MFA and proper session management
+3. **Authentication**: Implement MFA and delegate to external identity providers
 4. **Permissions**: Apply principle of least privilege everywhere
 5. **Code Safety**: Never execute user-provided code directly
 6. **External Data**: Validate and sanitize all external data sources
+7. **Token Security**: Only accept tokens explicitly issued for your MCP server
+8. **Session Security**: Use secure, non-deterministic session IDs bound to users
+9. **Prompt Protection**: Implement Microsoft Prompt Shields
+10. **Supply Chain**: Verify all AI components and dependencies
 
 ### Essential Security Controls
 ```javascript
@@ -75,7 +90,64 @@ function executeToolSafely(toolName, params, user) {
     const tool = getVerifiedTool(toolName);
     return tool.execute(sanitizeParams(params));
 }
+
+// 4. Secure Session Management
+function createSecureSession(userId) {
+    const sessionId = generateSecureRandomId();
+    const boundSessionId = `${userId}:${sessionId}`;
+    
+    return {
+        id: boundSessionId,
+        userId: userId,
+        created: Date.now(),
+        expires: Date.now() + SESSION_TIMEOUT
+    };
+}
+
+// 5. Token Validation
+function validateMCPToken(token) {
+    const decoded = jwt.verify(token, publicKey);
+    
+    if (decoded.aud !== MCP_SERVER_AUDIENCE) {
+        throw new SecurityError('Invalid token audience');
+    }
+    
+    return decoded;
+}
 ```
+
+---
+
+## 🛡️ Microsoft Security Solutions Quick Reference
+
+### Prompt Shields
+```javascript
+// Integrate Azure Prompt Shields
+const promptShield = new AzurePromptShield({
+    endpoint: process.env.AZURE_CONTENT_SAFETY_ENDPOINT,
+    apiKey: process.env.AZURE_CONTENT_SAFETY_KEY
+});
+
+async function validateWithPromptShield(input) {
+    const result = await promptShield.analyzePrompt(input);
+    if (result.isInjectionDetected) {
+        throw new SecurityError('Prompt injection detected');
+    }
+    return result.sanitizedInput;
+}
+```
+
+### Azure Content Safety
+- **Jailbreak Detection**: Identify bypass attempts
+- **Harmful Content Screening**: Filter inappropriate content
+- **Custom Policies**: Define organization-specific rules
+- **Real-time Analysis**: Immediate content evaluation
+
+### GitHub Advanced Security
+- **Secret Scanning**: Detect exposed credentials
+- **Dependency Scanning**: Find vulnerable components
+- **CodeQL Analysis**: Static security analysis
+- **Supply Chain Monitoring**: Track AI component security
 
 ---
 
@@ -168,16 +240,16 @@ function executeToolSafely(toolName, params, user) {
 
 | OWASP LLM Risk | MCP Equivalent | Our Coverage |
 |----------------|----------------|--------------|
-| LLM01: Prompt Injection | Prompt Injection | ✅ Section 1 |
+| LLM01: Prompt Injection | Prompt Injection, Indirect Injection | ✅ Sections 1,6 |
 | LLM02: Insecure Output Handling | Tool Poisoning | ✅ Section 2 |
-| LLM03: Training Data Poisoning | Supply Chain | ✅ Section 7 |
-| LLM04: Model Denial of Service | Not directly applicable | ⚠️ Consider rate limiting |
-| LLM05: Supply Chain Vulnerabilities | Supply Chain | ✅ Section 7 |
-| LLM06: Sensitive Information Disclosure | Excessive Permissions | ✅ Section 5 |
+| LLM03: Training Data Poisoning | Supply Chain | ✅ Section 10 |
+| LLM04: Model Denial of Service | Session Hijacking | ✅ Section 7 + Rate limiting |
+| LLM05: Supply Chain Vulnerabilities | Supply Chain | ✅ Section 10 |
+| LLM06: Sensitive Information Disclosure | Excessive Permissions, Token Passthrough | ✅ Sections 5,9 |
 | LLM07: Insecure Plugin Design | Tool Poisoning, Dynamic Changes | ✅ Sections 2,3 |
-| LLM08: Excessive Agency | Excessive Permissions | ✅ Section 5 |
-| LLM09: Overreliance | Not directly applicable | ⚠️ Consider user education |
-| LLM10: Model Theft | Not directly applicable | ⚠️ Consider access controls |
+| LLM08: Excessive Agency | Excessive Permissions, Confused Deputy | ✅ Sections 5,8 |
+| LLM09: Overreliance | Session Hijacking | ⚠️ User education + Section 7 |
+| LLM10: Model Theft | Token Passthrough, Auth Issues | ✅ Sections 4,9 |
 
 ---
 
